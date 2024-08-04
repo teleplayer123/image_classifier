@@ -1,11 +1,11 @@
 from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import CuDNNLSTM, Dense, InputLayer, Flatten, SimpleRNN, Dropout, LSTM
+from tensorflow.python.keras.layers import Dense, Dropout, LSTM
 import tensorflow as tf
 
 
 def create_model():
     model = tf.keras.Sequential([
-    tf.keras.layers.Dense(10, activation=tf.nn.relu, input_shape=(20,)),
+    tf.keras.layers.Dense(10, activation=tf.nn.relu, input_shape=(19,)),
     tf.keras.layers.Dense(10, activation=tf.nn.relu),
     tf.keras.layers.Dense(3)
     ])
