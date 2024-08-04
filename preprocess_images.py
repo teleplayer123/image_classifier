@@ -117,6 +117,10 @@ def train_predict_digits(X, y, digit=1):
     return scores
 
 
+##########################################################
+#             MNIST784 Image Classification              #
+##########################################################
+
 def get_mnist784_dataset():
     data_dir = os.path.join(os.getcwd(), "datasets")
     if not os.path.exists(data_dir):
