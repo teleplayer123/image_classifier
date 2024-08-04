@@ -22,7 +22,7 @@ def classify_image(img_file, labels, model):
 
   size = common.input_size(interpreter)
   image = Image.open(img_file).convert('RGB').resize(size, Image.LANCZOS)
-# Image data must go through two transforms before running inference:
+  # Image data must go through two transforms before running inference:
   # 1. normalization: f = (input - mean) / std
   # 2. quantization: q = f / scale + zero_point
   # The following code combines the two steps as such:
