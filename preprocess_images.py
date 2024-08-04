@@ -19,16 +19,22 @@ def plot_digit_arr(img_data):
 
 def crop_images(paths):
     i = 0
+    img_dir = os.path.join(os.getcwd(), "datasets", "images")
+    if not os.path.exists(img_dir):
+        os.mkdir(img_dir)
     for path in paths:
         i += 1
-        new_img_path = os.path.join(os.getcwd(), "datasets", "images", "img{}.png".format(i))
+        new_img_path = os.path.join(img_dir, "img{}.png".format(i))
         img_data = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
         img = img_data[0:45, 0:278]
         cv2.imwrite(new_img_path, img)
 
 def split_image_digits(path, imgs_path):
     new_dirname = os.path.split(path)[-1].split(".")[0]
-    new_path = os.path.join(imgs_path, new_dirname)
+    new_dir = os.path.join(os.getcwd(), "datasets", "new_images")
+    if not os.path.exists(new_dir):
+        os.mkdir(new_dir)
+    new_path = os.path.join(new_dir, new_dirname)
     if not os.path.exists(new_path):
         os.mkdir(new_path)
     img = cv2.imread(path)
@@ -98,6 +104,7 @@ def save_image_data(imgs_path):
     if not os.path.exists(df_save_dir):
         os.mkdir(df_save_dir)
     main_df.to_csv(os.path.join(df_save_dir, "image_pixels_{}.csv".format(int(time.time()))))
+    return main_df
     
 def train_predict_digits(X, y, digit=1):
     X_train, X_test, y_train, y_test = X[:60000], X[60000:], y[:60000], y[60000:]
