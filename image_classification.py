@@ -6,6 +6,10 @@ from pycoral.utils.edgetpu import make_interpreter
 import time
 
 
+"""
+py -m pip install --extra-index-url https://google-coral.github.io/py-repo/ pycoral~=2.0
+"""
+
 def classify_image(img_file, labels, model):
   labels = read_label_file(labels)
 
