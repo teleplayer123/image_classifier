@@ -2,6 +2,7 @@ from collections import defaultdict
 import cv2
 import os
 import re
+import time
 import matplotlib.pyplot as plt
 from sklearn.datasets import fetch_openml
 import pandas as pd
@@ -25,8 +26,7 @@ def crop_images(paths):
         img = img_data[0:45, 0:278]
         cv2.imwrite(new_img_path, img)
 
-def split_image_digits(path):
-    imgs_path = os.path.join(os.getcwd(), "datasets", "images")
+def split_image_digits(path, imgs_path):
     new_dirname = os.path.split(path)[-1].split(".")[0]
     new_path = os.path.join(imgs_path, new_dirname)
     if not os.path.exists(new_path):
@@ -40,9 +40,9 @@ def split_image_digits(path):
     cv2.imwrite(os.path.join(new_path, "image3.png"), img3)
     return new_path
 
-def create_image_data():
+def create_image_data(img_dirname):
     new_image_paths = []
-    images_dir = os.path.join(os.getcwd(), "datasets", "original_images")
+    images_dir = os.path.join(os.getcwd(), "datasets", img_dirname)
     paths = [[os.path.join(dn, fn) for fn in files] for dn, _ , files in os.walk(images_dir)]
     paths = sum(paths, [])
     crop_images(paths)
@@ -94,12 +94,11 @@ def save_image_data(imgs_path):
             main_df = df
         else:
             main_df = pd.concat([main_df, df])
-    df_save_dir = os.path.join(os.getcwd(), "datasets", "digit_data")
+    df_save_dir = os.path.join(os.getcwd(), "output")
     if not os.path.exists(df_save_dir):
         os.mkdir(df_save_dir)
-    main_df.to_csv(os.path.join(df_save_dir, "digit_pixels.csv"))
+    main_df.to_csv(os.path.join(df_save_dir, "image_pixels_{}.csv".format(int(time.time()))))
     
-
 def train_predict_digits(X, y, digit=1):
     X_train, X_test, y_train, y_test = X[:60000], X[60000:], y[:60000], y[60000:]
     y_train_digit = (y_train == digit)
@@ -109,6 +108,7 @@ def train_predict_digits(X, y, digit=1):
     sgd_clf.predict(X_test[0])
     scores = cross_val_score(sgd_clf, X_train, y_train_digit, cv=3, scoring="accuracy")
     return scores
+
 
 def get_mnist784_dataset():
     data_dir = os.path.join(os.getcwd(), "datasets")
