@@ -3,12 +3,10 @@ from tensorflow.python.keras.layers import Dense, Dropout, LSTM
 import tensorflow as tf
 
 
-def create_model():
-    model = tf.keras.Sequential([
-    tf.keras.layers.Dense(10, activation=tf.nn.relu, input_shape=(19,)),
-    tf.keras.layers.Dense(10, activation=tf.nn.relu),
-    tf.keras.layers.Dense(3)
-    ])
+##################################################################
+#                main models for use                             #
+##################################################################
+
 
 def build_model():
     model = tf.keras.models.Sequential()
@@ -20,14 +18,32 @@ def build_model():
     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     return model
 
+def train_model(X, y, epochs=100):
+    X_train, X_test, y_train, y_test = X[:20], X[20:25], y[:20], y[20:25]
+    X_train = tf.keras.utils.normalize(X_train, axis=1)
+    X_test = tf.keras.utils.normalize(X_test, axis=1)
+    model = build_model()
+    res = model.fit(X_train, y_train, epochs=epochs)
+    scores = model.evaluate(X_test, y_test, verbose=0)
+    print(f"Loss: {scores[0]}")
+    print(f"Accuracy: {scores[1]}")
+
+
+##################################################################
+#            other models for reference                          #
+##################################################################
+
+
 def build_scn(num_classes=1000):
     model = tf.keras.models.Sequential([
-        tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(4048,)),
+        tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
         tf.keras.layers.MaxPooling2D((2, 2)),
+        tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+        tf.keras.layers.MaxPooling2D((2, 2)),
+        tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
         tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(128, activation='relu'),
-        tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.Dense(num_classes)
+        tf.keras.layers.Dense(64, activation='relu'),
+        tf.keras.layers.Dense(num_classes, activation="softmax")
     ])
     model.compile(optimizer='adam', loss=tf.losses.CategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
     return model
