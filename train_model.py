@@ -15,6 +15,16 @@ def build_model():
     model.add(tf.keras.layers.Flatten(input_shape=(4048,)))
     model.add(tf.keras.layers.Dense(128, activation='relu'))
     model.add(tf.keras.layers.Dense(128, activation='relu'))
+    model.add(tf.keras.layers.Dense(1000, activation='softmax'))
+    #model.add(tf.keras.layers.Dense(1))
+    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    return model
+
+def build_model():
+    model = tf.keras.models.Sequential()
+    model.add(tf.keras.layers.Flatten(input_shape=(4048,)))
+    model.add(tf.keras.layers.Dense(128, activation='relu'))
+    model.add(tf.keras.layers.Dense(128, activation='relu'))
     model.add(tf.keras.layers.Dense(10, activation='softmax'))
     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     return model
