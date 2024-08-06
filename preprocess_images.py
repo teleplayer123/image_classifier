@@ -67,6 +67,21 @@ def imgs_to_dict(dirname):
         i += 1
     return img_dict
 
-def images_to_arr(img_dict):
-    imgs = list(img_dict.values())
+def images_to_arr(obj):
+    imgs = []
+    if isinstance(obj, dict):
+        imgs = [normalize_img(img) for img in obj.values()]
+    elif isinstance(obj, str):
+        dir_path = None 
+        if os.path.isdir(imgs):
+            dir_path = imgs
+        else:
+            dir_path = os.path.join(os.getcwd(), obj)
+        for fname in os.listdir(dir_path):
+            img_path = os.path.join(dir_path, fname)
+            img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+            img = normalize_img(img)
+            imgs.append(img)
+    else:
+        raise TypeError(f"type {type(obj)} is not supported")
     return np.array(imgs)
