@@ -56,6 +56,17 @@ def create_image_data(img_dirname, outdirname="newer_images"):
         i += 3
     return outdir
 
+def imgs_to_dict(dirname):
+    img_dict = {}
+    image_dir = os.path.join(os.getcwd(), "datasets", dirname)
+    i = 0
+    for fname in os.listdir(image_dir):
+        img_path = os.path.join(image_dir, fname)
+        img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+        img_dict["image{}".format(i+1)] = normalize_img(img)
+        i += 1
+    return img_dict
 
-# new_path = create_image_data("images")
-# print(new_path)
+def images_to_arr(img_dict):
+    imgs = list(img_dict.values())
+    return np.array(imgs)
