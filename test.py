@@ -1,4 +1,4 @@
-from preprocess_images import save_image_data, create_image_data
+from crop_images import save_image_data, create_image_data
 import os
 
 paths = create_image_data("images")
