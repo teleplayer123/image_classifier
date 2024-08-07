@@ -8,35 +8,30 @@ import tensorflow as tf
 ##################################################################
 
 
-def build_model(input_shape):
+def build_model_basic(input_shape, n_outputs):
     model = tf.keras.models.Sequential()
     model.add(tf.keras.layers.Flatten(input_shape=input_shape))
     model.add(tf.keras.layers.Dense(128, activation='relu'))
     model.add(tf.keras.layers.Dense(128, activation='relu'))
-    model.add(tf.keras.layers.Dense(1000, activation='softmax'))
-    #model.add(tf.keras.layers.Dense(1))
+    model.add(tf.keras.layers.Dense(n_outputs, activation='softmax'))
     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     return model
 
-def create_model():
+def build_model(input_shape, n_outputs):
     model = tf.keras.Sequential([
-        tf.keras.layers.Flatten(input_shape=(44, 92)),
+        # tf.keras.layers.Flatten(input_shape=input_shape),
+        tf.keras.layers.Reshape(target_shape=(input_shape[0], input_shape[1], 1)),
+        tf.keras.layers.Conv2D(filters=32, kernel_size=(3, 3), activation=tf.nn.relu),
+        tf.keras.layers.Conv2D(filters=64, kernel_size=(3, 3), activation=tf.nn.relu),
+        tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+        # tf.keras.layers.Dropout(0.25),
+        tf.keras.layers.Flatten(input_shape=input_shape),
         tf.keras.layers.Dense(128, activation=tf.nn.relu),
-
-    # Optional: You can replace the dense layer above with the convolution layers below to get higher accuracy.
-        # keras.layers.Reshape(target_shape=(28, 28, 1)),
-        # keras.layers.Conv2D(filters=32, kernel_size=(3, 3), activation=tf.nn.relu),
-        # keras.layers.Conv2D(filters=64, kernel_size=(3, 3), activation=tf.nn.relu),
-        # keras.layers.MaxPooling2D(pool_size=(2, 2)),
-        # keras.layers.Dropout(0.25),
-        # keras.layers.Flatten(input_shape=(28, 28)),
-        # keras.layers.Dense(128, activation=tf.nn.relu),
-        # keras.layers.Dropout(0.5),
-
-        tf.keras.layers.Dense(200)
+        # tf.keras.layers.Dropout(0.5),
+        tf.keras.layers.Dense(n_outputs, activation="softmax")
     ])
     model.compile(optimizer='adam',
-                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                loss="sparse_categorical_crossentropy",
                 metrics=['accuracy'])
     return model
 

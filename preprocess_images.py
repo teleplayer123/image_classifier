@@ -34,10 +34,6 @@ def split_image_digits(path):
     # img3 = img3.reshape(-1, 4048).astype(np.int8)
     return img1, img2, img3
 
-def normalize_img(img):
-    img = img * 1.0/255
-    return img
-
 def crop_images(paths):
     i = 0
     img_dir = os.path.join(os.getcwd(), "datasets", "images")
@@ -70,6 +66,10 @@ def create_image_data(img_dirname, outdirname="newer_images"):
         i += 3
     return outdir
 
+def normalize_img(img):
+    img = img * 1.0/255
+    return img
+
 def imgs_to_dict(dirname):
     img_dict = {}
     image_dir = os.path.join(os.getcwd(), "datasets", dirname)
@@ -77,7 +77,7 @@ def imgs_to_dict(dirname):
     for fname in os.listdir(image_dir):
         img_path = os.path.join(image_dir, fname)
         img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-        img_dict["image{}".format(i+1)] = normalize_img(img)
+        img_dict["image{}".format(i+1)] = img
         i += 1
     return img_dict
 
@@ -91,7 +91,7 @@ def images_to_arr(obj):
             dir_path = imgs
         else:
             dir_path = os.path.join(os.getcwd(), obj)
-        for fname in os.listdir(dir_path):
+        for fname in sorted(os.listdir(dir_path)):
             img_path = os.path.join(dir_path, fname)
             img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
             img = normalize_img(img)
