@@ -8,15 +8,38 @@ import tensorflow as tf
 ##################################################################
 
 
-def build_model():
+def build_model(input_shape):
     model = tf.keras.models.Sequential()
-    model.add(tf.keras.layers.Flatten(input_shape=(4048,)))
+    model.add(tf.keras.layers.Flatten(input_shape=input_shape))
     model.add(tf.keras.layers.Dense(128, activation='relu'))
     model.add(tf.keras.layers.Dense(128, activation='relu'))
     model.add(tf.keras.layers.Dense(1000, activation='softmax'))
     #model.add(tf.keras.layers.Dense(1))
     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     return model
+
+def create_model():
+    model = tf.keras.Sequential([
+        tf.keras.layers.Flatten(input_shape=(44, 92)),
+        tf.keras.layers.Dense(128, activation=tf.nn.relu),
+
+    # Optional: You can replace the dense layer above with the convolution layers below to get higher accuracy.
+        # keras.layers.Reshape(target_shape=(28, 28, 1)),
+        # keras.layers.Conv2D(filters=32, kernel_size=(3, 3), activation=tf.nn.relu),
+        # keras.layers.Conv2D(filters=64, kernel_size=(3, 3), activation=tf.nn.relu),
+        # keras.layers.MaxPooling2D(pool_size=(2, 2)),
+        # keras.layers.Dropout(0.25),
+        # keras.layers.Flatten(input_shape=(28, 28)),
+        # keras.layers.Dense(128, activation=tf.nn.relu),
+        # keras.layers.Dropout(0.5),
+
+        tf.keras.layers.Dense(200)
+    ])
+    model.compile(optimizer='adam',
+                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                metrics=['accuracy'])
+    return model
+
 
 def train_model(X, y, epochs=100):
     X_train, X_test, y_train, y_test = X[:20], X[20:25], y[:20], y[20:25]
