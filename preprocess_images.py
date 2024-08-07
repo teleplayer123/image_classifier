@@ -10,6 +10,20 @@ from sklearn.model_selection import cross_val_score
 import numpy as np
 
 
+########  NOTES  ##########
+
+# Tensor Info:
+#  Shape: length of each of the axes of the tensor
+#  Rank: Number of tensor axes.
+#        - Scalar has rank 0
+#        - Vector has rank 1
+#        - Matrix has rank 2
+# Axis/Dimension: a particular dimension of a tensor
+# Size: total number of items in the tensor, the product of the shape vector's elements
+
+# Typical axis order (Rank 4): (Batch, Height, Width, Features)
+
+
 def split_image_digits(path):
     img = cv2.imread(path)
     img1 = img[0:44, 0:92]
