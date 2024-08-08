@@ -42,3 +42,4 @@ model.fit(x_train, y_train, epochs=40)
 scores = model.evaluate(x_test, y_test, verbose=0)
 print(f"Loss: {scores[0]}")
 print(f"Accuracy: {scores[1]}")
+
