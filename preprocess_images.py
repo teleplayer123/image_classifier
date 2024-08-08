@@ -24,6 +24,10 @@ import numpy as np
 # Typical axis order (Rank 4): (Batch, Height, Width, Features)
 
 
+##################################################################
+#       Functions that were used to create dataset               #
+##################################################################
+
 def split_image_digits(path):
     img = cv2.imread(path)
     img1 = img[0:44, 0:92]
@@ -65,6 +69,10 @@ def create_image_data(img_dirname, outdirname="newer_images"):
         cv2.imwrite(path3, img3)
         i += 3
     return outdir
+
+#######################################################
+#                Preprocessing Functions              #
+#######################################################
 
 def normalize_img(img):
     img = img * 1.0/255
