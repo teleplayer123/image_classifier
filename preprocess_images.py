@@ -78,15 +78,14 @@ def normalize_img(img):
     img = img * 1.0/255
     return img
 
-def imgs_to_dict(dirpath):
+def imgs_to_dict(image_dir):
     img_dict = {}
-    image_dir = os.path.join(os.getcwd(), dirpath)
-    i = 0
     for fname in os.listdir(image_dir):
         img_path = os.path.join(image_dir, fname)
         img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-        img_dict["image{}".format(i+1)] = img
-        i += 1
+        name = fname.split(".")[0]
+        idx = name.split("image")[-1]
+        img_dict[idx] = img
     return img_dict
 
 def images_to_arr(obj):
