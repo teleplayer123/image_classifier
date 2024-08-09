@@ -1,6 +1,7 @@
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, LSTM
 import tensorflow as tf
+import numpy as np
 
 
 ##################################################################
@@ -45,6 +46,21 @@ def train_model(X, y, epochs=100):
     scores = model.evaluate(X_test, y_test, verbose=0)
     print(f"Loss: {scores[0]}")
     print(f"Accuracy: {scores[1]}")
+
+def train_model(X, y, epochs=100):
+    x_train, x_test = X[:30], X[30:40]
+    y_train, y_test = np.array(y[:30]), np.array(y[30:40]) 
+    x_val, y_val = np.array(X[40:50]), np.array(y[40:50])
+    model = build_model((44, 92), 130)
+    history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=60)
+    # model.evaluate(x_val, y_val)
+    scores = history.history
+    loss = np.average(scores["loss"])
+    accuracy = np.average(scores["accuracy"])
+    print("Loss Average: {}".format(loss))
+    print("Accuracy Average: {}".format(accuracy))
+    print("Loss: {}".format(scores["loss"][-1]))
+    print("Accuracy: {}".format(scores["accuracy"][-1]))
 
 
 ##################################################################
