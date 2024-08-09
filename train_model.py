@@ -63,9 +63,31 @@ def train_model(X, y, epochs=100):
     print("Accuracy: {}".format(scores["accuracy"][-1]))
 
 
-##################################################################
-#            other models for reference                          #
-##################################################################
+################################################################
+#            functions to save models                          #
+################################################################
+
+
+def save_model(model):
+    # Convert the model.
+    converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    tflite_model = converter.convert()
+
+    # Save the model.
+    with open('models\\model.tflite', 'wb') as fh:
+        fh.write(tflite_model)
+
+    converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    tflite_quant_model = converter.convert()
+
+    with open('models\\model_quantized.tflite', 'wb') as fh:
+        fh.write(tflite_model)
+
+
+#################################################################
+#            other models for reference                         #
+#################################################################
 
 
 def build_scn(num_classes=1000):
