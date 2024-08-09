@@ -77,12 +77,13 @@ def save_model(model):
     with open('models\\model.tflite', 'wb') as fh:
         fh.write(tflite_model)
 
+def save_model_quantized(model):
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
     tflite_quant_model = converter.convert()
 
     with open('models\\model_quantized.tflite', 'wb') as fh:
-        fh.write(tflite_model)
+        fh.write(tflite_quant_model)
 
 
 #################################################################
