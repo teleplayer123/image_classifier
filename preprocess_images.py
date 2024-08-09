@@ -78,9 +78,9 @@ def normalize_img(img):
     img = img * 1.0/255
     return img
 
-def imgs_to_dict(dirname):
+def imgs_to_dict(dirpath):
     img_dict = {}
-    image_dir = os.path.join(os.getcwd(), "datasets", dirname)
+    image_dir = os.path.join(os.getcwd(), dirpath)
     i = 0
     for fname in os.listdir(image_dir):
         img_path = os.path.join(image_dir, fname)

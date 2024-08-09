@@ -5,7 +5,7 @@ from preprocess_images import imgs_to_dict, images_to_arr
 
 
 
-d = imgs_to_dict("newer_images")
+d = imgs_to_dict("integer_images")
 a = images_to_arr(d)
 print(a.shape)
 
