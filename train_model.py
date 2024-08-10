@@ -88,6 +88,23 @@ def convert_model_to_tflite(model):
   with open(file_path, "wb") as fh:
     fh.write(tflite_model)
 
+def convert_tflite_int8(saved_model_dir):
+  def representative_dataset():
+    for _ in range(130):
+      data = np.random.rand(1, 44, 92)
+      yield [data.astype(np.float32)]
+      
+  file_path = os.path.join(os.getcwd(), "models", "model.tflite")
+  converter = tf.lite.TFLiteConverter.from_saved_model(saved_model_dir)
+  converter.optimizations = [tf.lite.Optimize.DEFAULT]
+  converter.representative_dataset = representative_dataset
+  converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+  converter.inference_input_type = tf.uint8
+  converter.inference_output_type = tf.uint8
+  tflite_quant_model = converter.convert()
+  with open(file_path, "wb") as fh:
+    fh.write(tflite_quant_model)
+
 
 #################################################################
 #            other models for reference                         #
