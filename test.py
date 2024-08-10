@@ -3,7 +3,7 @@ import tensorflow as tf
 import os
 
 from preprocess_images import imgs_to_dict, images_to_arr
-from image_classification import classify_image
+# from image_classification import classify_image
 
 
 dirpath = os.path.join(os.getcwd(), "integer_images")
@@ -80,4 +80,18 @@ def save_tf_model(model):
 
   tf.saved_model.save(model, save_dir)
 
-save_tf_model(model)
+saved_model_dir = os.path.join(os.getcwd(), "models", "saved_models")
+
+def convert_model_to_tflite(saved_model_dir):
+  converter = tf.lite.TFLiteConverter.from_keras_model(model)
+  tflite_model = converter.convert()
+
+
+  converter = tf.lite.TFLiteConverter.from_saved_model(saved_model_dir)
+  tflite_model = converter.convert()
+
+  # Save the model.
+  with open('modelv1.tflite', 'wb') as f:
+    f.write(tflite_model)
+
+convert_model_to_tflite(saved_model_dir)
