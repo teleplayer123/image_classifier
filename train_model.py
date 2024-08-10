@@ -2,12 +2,12 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, LSTM
 import tensorflow as tf
 import numpy as np
+import os
 
 
 ##################################################################
 #                main models for use                             #
 ##################################################################
-
 
 def build_model_basic(input_shape, n_outputs):
     model = tf.keras.models.Sequential()
@@ -36,7 +36,6 @@ def build_model(input_shape, n_outputs):
                 metrics=['accuracy'])
     return model
 
-
 def train_model(X, y, epochs=100):
     X_train, X_test, y_train, y_test = X[:20], X[20:25], y[:20], y[20:25]
     X_train = tf.keras.utils.normalize(X_train, axis=1)
@@ -64,32 +63,35 @@ def train_model(X, y, epochs=100):
 
 
 ################################################################
-#            functions to save models                          #
+#            functions to save/convert models                  #
 ################################################################
 
-
-def save_model(model):
-    # Convert the model.
-    converter = tf.lite.TFLiteConverter.from_keras_model(model)
-    tflite_model = converter.convert()
-
-    # Save the model.
-    with open('models\\model.tflite', 'wb') as fh:
-        fh.write(tflite_model)
-
 def save_model_quantized(model):
+    file_path = os.path.join(os.getcwd(), "models", "model_quantized.tflite")
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
     tflite_quant_model = converter.convert()
-
-    with open('models\\model_quantized.tflite', 'wb') as fh:
+    with open(file_path, "wb") as fh:
         fh.write(tflite_quant_model)
+
+def convert_saved_model_to_tflite(saved_model_dir):
+  file_path = os.path.join(os.getcwd(), "models", "model.tflite")
+  converter = tf.lite.TFLiteConverter.from_saved_model(saved_model_dir)
+  tflite_model = converter.convert()
+  with open(file_path, "wb") as fh:
+    fh.write(tflite_model)
+
+def convert_model_to_tflite(model):
+  file_path = os.path.join(os.getcwd(), "models", "model.tflite")
+  converter = tf.lite.TFLiteConverter.from_keras_model(model)
+  tflite_model = converter.convert()
+  with open(file_path, "wb") as fh:
+    fh.write(tflite_model)
 
 
 #################################################################
 #            other models for reference                         #
 #################################################################
-
 
 def build_scn(num_classes=1000):
     model = tf.keras.models.Sequential([
