@@ -7,7 +7,7 @@ from image_classification import classify_image
 
 
 dirpath = os.path.join(os.getcwd(), "integer_images")
-labels = os.path.join(dirpath, "labels.txt")
+labels = os.path.join(os.getcwd(), "labels.txt")
 
 d = imgs_to_dict(dirpath)
 a = images_to_arr(d)
