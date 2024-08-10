@@ -3,9 +3,11 @@ import tensorflow as tf
 import os
 
 from preprocess_images import imgs_to_dict, images_to_arr
+from image_classification import classify_image
 
 
 dirpath = os.path.join(os.getcwd(), "integer_images")
+labels = os.path.join(dirpath, "labels.txt")
 
 d = imgs_to_dict(dirpath)
 a = images_to_arr(d)
@@ -58,3 +60,14 @@ scores = history.history
 # print("Accuracy Average: {}".format(accuracy))
 print("Loss: {}".format(scores["loss"][-1]))
 print("Accuracy: {}".format(scores["accuracy"][-1]))
+
+# converter = tf.lite.TFLiteConverter.from_keras_model(model)
+# converter.optimizations = [tf.lite.Optimize.DEFAULT]
+# tflite_quant_model = converter.convert()
+
+# with open('models\\model_quantized.tflite', 'wb') as f:
+#   f.write(tflite_quant_model)
+
+tflite_model = os.path.join(os.getcwd(), "models", "model_quantized.tflite")
+img_file = os.path.join(os.getcwd(), "integer_images", "image112.png")
+classify_image(img_file, labels, tflite_model)
