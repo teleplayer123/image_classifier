@@ -4,24 +4,26 @@ from pycoral.adapters import classify, common
 from pycoral.utils.dataset import read_label_file
 from pycoral.utils.edgetpu import make_interpreter
 import time
+import cv2
 
 
 """
 py -m pip install --extra-index-url https://google-coral.github.io/py-repo/ pycoral~=2.0
 """
 
-def classify_image(img_file, labels, model):
+def classify_image(img_file, labels, interpreter):
   labels = read_label_file(labels)
 
-  interpreter = make_interpreter(model)
   interpreter.allocate_tensors()
 
   # Model must be uint8 quantized
   if common.input_details(interpreter, 'dtype') != np.uint8:
     raise ValueError('Only support uint8 input type.')
-
+  
   size = common.input_size(interpreter)
-  image = Image.open(img_file).convert('RGB').resize(size, Image.LANCZOS)
+  print("SIZE: {}".format(size))
+  image = cv2.imread(img_file, cv2.IMREAD_GRAYSCALE)
+  #image = Image.open(img_file).convert('RGB').resize(size, Image.LANCZOS)
   # Image data must go through two transforms before running inference:
   # 1. normalization: f = (input - mean) / std
   # 2. quantization: q = f / scale + zero_point
@@ -32,6 +34,7 @@ def classify_image(img_file, labels, model):
   # very close to 1 and 0, it is probably okay to skip preprocessing for better
   # efficiency; we use 1e-5 below instead of absolute zero).
   params = common.input_details(interpreter, 'quantization_parameters')
+  print("PARAMS: {}".format(params))
   scale = params['scales']
   zero_point = params['zero_points']
   mean = 128.0

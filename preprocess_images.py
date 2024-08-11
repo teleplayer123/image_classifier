@@ -1,12 +1,5 @@
-from collections import defaultdict
 import cv2
 import os
-import re
-import time
-import matplotlib.pyplot as plt
-import pandas as pd
-from sklearn.linear_model import SGDClassifier
-from sklearn.model_selection import cross_val_score
 import numpy as np
 
 
