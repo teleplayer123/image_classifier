@@ -1,7 +1,6 @@
 import numpy as np
 from pycoral.adapters import classify, common
 from pycoral.utils.dataset import read_label_file
-from pycoral.utils.edgetpu import make_interpreter
 import time
 import cv2
 
