@@ -6,6 +6,11 @@ from preprocess_images import imgs_to_dict, images_to_arr
 # from image_classification import classify_image
 
 
+"""
+py .\examples\classify_image.py --model C:\py_repos\image_classifier\models\model_quant.tflite --labels C:\py_repos\image_classifier\models\labels.txt
+ --input C:\py_repos\image_classifier\models\image112.png
+"""
+
 dirpath = os.path.join(os.getcwd(), "integer_images")
 labels = os.path.join(os.getcwd(), "labels.txt")
 
