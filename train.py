@@ -32,7 +32,7 @@ print(y_val.shape)
 
 data_augmentation = tf.keras.Sequential(
   [
-    tf.keras.layers.RandomFlip("horizontal", input_shape=(44, 92, 1)),
+    tf.keras.layers.RandomFlip("horizontal", input_shape=(44, 92)),
     tf.keras.layers.RandomRotation(0.1),
     tf.keras.layers.RandomZoom(0.1),
   ]
@@ -40,13 +40,12 @@ data_augmentation = tf.keras.Sequential(
 
 def build_model(input_shape, n_outputs):
     model = tf.keras.Sequential([
-        #data_augmentation,
+        # data_augmentation,
         tf.keras.layers.Reshape(target_shape=(input_shape[0], input_shape[1], 1)),
         tf.keras.layers.Conv2D(filters=32, kernel_size=(3, 3), activation=tf.nn.relu),
         tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
         tf.keras.layers.Conv2D(filters=64, kernel_size=(3, 3), activation=tf.nn.relu),
         tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
-        #tf.keras.layers.Dropout(0.25),
         tf.keras.layers.Flatten(input_shape=input_shape),
         tf.keras.layers.Dense(128, activation=tf.nn.relu),
         tf.keras.layers.Dense(n_outputs, activation="softmax")
