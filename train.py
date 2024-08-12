@@ -19,9 +19,9 @@ with open(label_file, "w") as fh:
         if label != labels[-1]:
            fh.write("\n")
 
-x_train, x_test = a[:30], a[30:40]
-y_train, y_test = np.array(targets[:30]), np.array(targets[30:40]) 
-x_val, y_val = np.array(a[40:50]), np.array(targets[40:50])
+x_train, x_test = a[:40], a[40:50]
+y_train, y_test = np.array(targets[:40]), np.array(targets[40:50]) 
+x_val, y_val = np.array(a[50:51]), np.array(targets[50:51])
 
 print(x_train.shape)
 print(y_train.shape)
@@ -40,7 +40,7 @@ data_augmentation = tf.keras.Sequential(
 
 def build_model(input_shape, n_outputs):
     model = tf.keras.Sequential([
-        data_augmentation,
+        # data_augmentation,
         tf.keras.layers.Reshape(target_shape=(input_shape[0], input_shape[1], 1)),
         tf.keras.layers.Conv2D(filters=32, kernel_size=(3, 3), activation=tf.nn.relu),
         tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
