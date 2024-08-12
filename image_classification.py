@@ -19,7 +19,7 @@ def classify_image(img_file, labels, interpreter):
     raise ValueError('Only support uint8 input type.')
   
   size = common.input_size(interpreter)
-  print("SIZE: {}".format(size))
+  # print("SIZE: {}".format(size))
   image = cv2.imread(img_file, cv2.IMREAD_GRAYSCALE)
   #image = Image.open(img_file).convert('RGB').resize(size, Image.LANCZOS)
   # Image data must go through two transforms before running inference:
