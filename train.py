@@ -40,7 +40,7 @@ data_augmentation = tf.keras.Sequential(
 
 def build_model(input_shape, n_outputs):
     model = tf.keras.Sequential([
-        # data_augmentation,
+        data_augmentation,
         tf.keras.layers.Reshape(target_shape=(input_shape[0], input_shape[1], 1)),
         tf.keras.layers.Conv2D(filters=32, kernel_size=(3, 3), activation=tf.nn.relu),
         tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
