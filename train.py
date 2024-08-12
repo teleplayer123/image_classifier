@@ -6,11 +6,18 @@ from preprocess_images import imgs_to_dict, images_to_arr
 
 
 dirpath = os.path.join(os.getcwd(), "integer_images")
-labels = os.path.join(os.getcwd(), "labels.txt")
 
 d = imgs_to_dict(dirpath)
 a = images_to_arr(d)
 targets = np.array([int(i) for i in list(d.keys())])
+
+labels = np.sort(targets, axis=0)
+label_file = os.path.join(os.getcwd(), "models", "labels.txt")
+with open(label_file, "w") as fh:
+    for label in labels:
+        fh.write(str(label))
+        if label != labels[-1]:
+           fh.write("\n")
 
 x_train, x_test = a[:30], a[30:40]
 y_train, y_test = np.array(targets[:30]), np.array(targets[30:40]) 
