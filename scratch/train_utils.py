@@ -46,12 +46,12 @@ def train_model(X, y, epochs=100):
     print(f"Loss: {scores[0]}")
     print(f"Accuracy: {scores[1]}")
 
-def train_model(X, y, epochs=100):
+def train_model_avg(X, y, epochs=100):
     x_train, x_test = X[:30], X[30:40]
     y_train, y_test = np.array(y[:30]), np.array(y[30:40]) 
     x_val, y_val = np.array(X[40:50]), np.array(y[40:50])
     model = build_model((44, 92), 130)
-    history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=60)
+    history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=epochs)
     # model.evaluate(x_val, y_val)
     scores = history.history
     loss = np.average(scores["loss"])

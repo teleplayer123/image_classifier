@@ -79,21 +79,12 @@ save_tf_model(model)
 
 saved_model_dir = os.path.join(os.getcwd(), "models", "saved_models")
 
-def convert_saved_model_to_tflite(saved_model_dir):
-  file_path = os.path.join(os.getcwd(), "models", "model.tflite")
-  converter = tf.lite.TFLiteConverter.from_saved_model(saved_model_dir)
-  tflite_model = converter.convert()
-  with open(file_path, "wb") as fh:
-    fh.write(tflite_model)
-
 def convert_model_to_tflite(model):
   file_path = os.path.join(os.getcwd(), "models", "model.tflite")
   converter = tf.lite.TFLiteConverter.from_keras_model(model)
   tflite_model = converter.convert()
   with open(file_path, "wb") as fh:
     fh.write(tflite_model)
-
-
 
 def convert_tflite_int8(saved_model_dir):
   def representative_dataset():
