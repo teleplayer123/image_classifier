@@ -2,14 +2,17 @@ import numpy as np
 import tensorflow as tf
 import os
 
-from utils import build_model, imgs_to_dict, images_to_arr
+from utils import build_model, imgs_to_dict, images_to_arr, imgs_to_dict_v1, images_to_arr_v1
 
 
-dirpath = os.path.join(os.getcwd(), "integer_images")
+# dirpath = os.path.join(os.getcwd(), "integer_image_dataset")
+dirpath = os.path.join(os.getcwd(), "datasets", "integer_images")
 
-d = imgs_to_dict(dirpath)
-a = images_to_arr(d)
-targets = np.array([int(i) for i in list(d.keys())])
+# d = imgs_to_dict(dirpath)
+# a = images_to_arr(d)
+d = imgs_to_dict_v1(dirpath)
+a = images_to_arr_v1(d)
+targets = np.array([int(i.split("_")[0]) for i in list(d.keys())])
 
 labels = np.sort(targets, axis=0)
 label_file = os.path.join(os.getcwd(), "models", "labels.txt")
@@ -64,7 +67,7 @@ def convert_model_to_tflite(model):
 def convert_tflite_int8(saved_model_dir):
   def representative_dataset():
     for _ in range(130):
-      data = np.random.rand(1, 44, 92)
+      data = np.random.rand(1, 44, 92, 1)
       yield [data.astype(np.float32)]
       
   file_path = os.path.join(os.getcwd(), "models", "model.tflite")

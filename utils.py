@@ -25,7 +25,7 @@ def convert_model_to_tflite(model):
 def convert_tflite_int8(saved_model_dir):
   def representative_dataset():
     for _ in range(130):
-      data = np.random.rand(1, 44, 92)
+      data = np.random.rand(1, 44, 92, 1)
       yield [data.astype(np.float32)]
       
   file_path = os.path.join(os.getcwd(), "models", "model.tflite")
@@ -54,9 +54,9 @@ def build_model(input_shape, n_outputs):
    model.add(tf.keras.layers.Conv2D(64, (3, 3), activation="relu"))
    model.add(tf.keras.layers.Flatten())
    model.add(tf.keras.layers.Dense(64, activation="relu"))
-   model.add(tf.keras.layers.Dense(n_outputs))
+   model.add(tf.keras.layers.Dense(n_outputs, activation="softmax"))
    model.compile(optimizer="adam",
-                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                 loss="sparse_categorical_crossentropy", #tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                  metrics=["accuracy"])
    return model
 
@@ -164,10 +164,39 @@ def imgs_to_dict(image_dir):
         name = names[0]
         sub_idx = names[-1].split(".")[0]
         idx = name.split("image")[-1]
-        img_dict[str(idx)+str(sub_idx)] = img
+        img_dict[str(idx)+"_"+str(sub_idx)] = img
     return img_dict
 
 def images_to_arr(obj):
+    imgs = []
+    if isinstance(obj, dict):
+        imgs = [normalize_img(img) for img in obj.values()]
+    elif isinstance(obj, str):
+        dir_path = None 
+        if os.path.isdir(imgs):
+            dir_path = imgs
+        else:
+            dir_path = os.path.join(os.getcwd(), obj)
+        for fname in sorted(os.listdir(dir_path)):
+            img_path = os.path.join(dir_path, fname)
+            img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+            img = normalize_img(img)
+            imgs.append(img)
+    else:
+        raise TypeError(f"type {type(obj)} is not supported")
+    return np.array(imgs)
+
+def imgs_to_dict_v1(image_dir):
+    img_dict = {}
+    for fname in os.listdir(image_dir):
+        img_path = os.path.join(image_dir, fname)
+        img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+        name = fname.split(".")[0]
+        idx = name.split("image")[-1]
+        img_dict[idx] = img
+    return img_dict
+
+def images_to_arr_v1(obj):
     imgs = []
     if isinstance(obj, dict):
         imgs = [normalize_img(img) for img in obj.values()]
