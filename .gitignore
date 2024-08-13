@@ -4,3 +4,5 @@ __pycache__
 /output
 scratch
 new_images
+newer_images
+.vscode
