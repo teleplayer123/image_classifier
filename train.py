@@ -2,11 +2,10 @@ import numpy as np
 import tensorflow as tf
 import os
 
-from utils import build_model, imgs_to_dict, images_to_arr, imgs_to_dict_v1, images_to_arr_v1
+from utils import build_model, imgs_to_dict, images_to_arr
 
 
 dirpath = os.path.join(os.getcwd(), "integer_image_dataset")
-# dirpath = os.path.join(os.getcwd(), "datasets", "integer_images")
 
 model_dir = os.path.join(os.getcwd(), "models")
 if not os.path.exists(model_dir):
@@ -14,8 +13,6 @@ if not os.path.exists(model_dir):
 
 d = imgs_to_dict(dirpath)
 a = images_to_arr(d)
-# d = imgs_to_dict_v1(dirpath)
-# a = images_to_arr_v1(d)
 targets = np.array([int(i.split("_")[0]) for i in list(d.keys())])
 
 labels = np.sort(targets, axis=0)
