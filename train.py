@@ -17,6 +17,7 @@ targets = np.array([int(i.split("_")[0]) for i in list(d.keys())])
 
 labels = np.sort(targets, axis=0)
 label_file = os.path.join(os.getcwd(), "models", "labels.txt")
+labels = list(set(labels))
 with open(label_file, "w") as fh:
     for label in labels:
         fh.write(str(label))
