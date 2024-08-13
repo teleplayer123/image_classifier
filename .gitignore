@@ -1,7 +1,7 @@
-/venv
-/datasets
+venv
+datasets
 __pycache__
-/output
+output
 scratch
 new_images
 newer_images
