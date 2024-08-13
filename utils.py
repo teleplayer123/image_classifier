@@ -160,9 +160,11 @@ def imgs_to_dict(image_dir):
     for fname in os.listdir(image_dir):
         img_path = os.path.join(image_dir, fname)
         img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-        name = fname.split(".")[0]
+        names = fname.split("_")
+        name = names[0]
+        sub_idx = names[-1].split(".")[0]
         idx = name.split("image")[-1]
-        img_dict[idx] = img
+        img_dict[str(idx)+str(sub_idx)] = img
     return img_dict
 
 def images_to_arr(obj):
