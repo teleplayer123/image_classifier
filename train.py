@@ -15,25 +15,20 @@ d = imgs_to_dict(dirpath)
 a = images_to_arr(d)
 targets = np.array([int(i.split("_")[0]) for i in list(d.keys())])
 
-labels = np.sort(targets, axis=0)
+labels = targets
 label_file = os.path.join(os.getcwd(), "models", "labels.txt")
-labels = list(set(labels))
-with open(label_file, "w") as fh:
-    for label in labels:
-        fh.write(str(label))
-        if label != labels[-1]:
-           fh.write("\n")
+labels.tofile(label_file, sep="\n", format="%d")
 
 x_train, x_test = a[:40], a[40:50]
 y_train, y_test = np.array(targets[:40]), np.array(targets[40:50]) 
 x_val, y_val = np.array(a[50:51]), np.array(targets[50:51])
 
-print(x_train.shape)
-print(y_train.shape)
-print(x_test.shape)
-print(y_test.shape)
-print(x_val.shape)
-print(y_val.shape)
+# print(x_train.shape)
+# print(y_train.shape)
+# print(x_test.shape)
+# print(y_test.shape)
+# print(x_val.shape)
+# print(y_val.shape)
 
 model = build_model((92, 92), 130)
 # model = build_model((38, 38), 130)
