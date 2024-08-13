@@ -2,8 +2,7 @@ import numpy as np
 import tensorflow as tf
 import os
 
-from preprocess_images import imgs_to_dict, images_to_arr
-from utils import build_model
+from utils import build_model, imgs_to_dict, images_to_arr
 
 
 dirpath = os.path.join(os.getcwd(), "integer_images")
