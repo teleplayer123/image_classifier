@@ -92,3 +92,49 @@ def pad_images():
             img = zero_pad_img(img)
         save_path = os.path.join(new_dir, fname)
         cv2.imwrite(save_path, img)
+
+
+#########################################
+#            Misc Functions             #
+#########################################
+
+def resize_images():
+    imgs_dir = os.path.join(os.getcwd(), "integer_images_dataset")
+    outdir = os.path.join(os.getcwd(), "integer_images_dataset_small")
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
+    for fname in os.listdir(imgs_dir):
+        f = os.path.join(imgs_dir, fname)
+        img = cv2.imread(f, cv2.IMREAD_GRAYSCALE)
+        img = cv2.resize(img, (38, 38))
+        outfile = os.path.join(outdir, fname)
+        cv2.imwrite(outfile, img)
+
+def crop_img2d(img_path):
+    img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+    img1 = img[:32, 30:46]
+    img2 = img[:32, 46:62]
+    # img1 = img[:32, 26:38]
+    # img2 = img[:32, 40:58]
+    outdir = os.path.join(os.getcwd(), "newer_images")
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
+    outfile1 = os.path.join(outdir, "image7_10.png")
+    outfile2 = os.path.join(outdir, "image9_6.png")
+    cv2.imwrite(outfile1, img1)
+    cv2.imwrite(outfile2, img2)
+
+def crop_img3d(img_path):
+    img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+    img1 = img[:32, 24:34]
+    img2 = img[:32, 34:52]
+    img3 = img[:32, 52:68]
+    outdir = os.path.join(os.getcwd(), "newer_images")
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
+    outfile1 = os.path.join(outdir, "image1_8.png")
+    outfile2 = os.path.join(outdir, "image2_6.png")
+    outfile3 = os.path.join(outdir, "image1_9.png")
+    cv2.imwrite(outfile1, img1)
+    cv2.imwrite(outfile2, img2)
+    cv2.imwrite(outfile3, img3)

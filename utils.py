@@ -22,10 +22,19 @@ def convert_model_to_tflite(model):
   with open(file_path, "wb") as fh:
     fh.write(tflite_model)
 
-def convert_tflite_int8(saved_model_dir):
+def save_tf_model(model):
+  model_dir = os.path.join(os.getcwd(), "models")
+  if not os.path.exists(model_dir):
+      os.mkdir(model_dir)
+  save_dir = os.path.join(model_dir, "saved_models")
+  if not os.path.exists(save_dir):
+      os.mkdir(save_dir)
+  tf.saved_model.save(model, save_dir)
+
+def convert_tflite_int8(saved_model_dir, input_shape=(92, 92), n_outputs=130):
   def representative_dataset():
-    for _ in range(130):
-      data = np.random.rand(1, 44, 92, 1)
+    for _ in range(n_outputs):
+      data = np.random.rand(1, input_shape[0], input_shape[1], 1)
       yield [data.astype(np.float32)]
       
   file_path = os.path.join(os.getcwd(), "models", "model.tflite")
@@ -54,9 +63,25 @@ def build_model(input_shape, n_outputs):
    model.add(tf.keras.layers.Conv2D(64, (3, 3), activation="relu"))
    model.add(tf.keras.layers.Flatten())
    model.add(tf.keras.layers.Dense(64, activation="relu"))
+   model.add(tf.keras.layers.Dense(n_outputs))
+   model.compile(optimizer="adam",
+                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                 metrics=["accuracy"])
+   return model
+
+def build_model_v2(input_shape, n_outputs):
+   model = tf.keras.models.Sequential()
+   model.add(tf.keras.layers.Input((input_shape[0], input_shape[1], 1)))
+   model.add(tf.keras.layers.Conv2D(32, (3, 3), activation="relu"))
+   model.add(tf.keras.layers.MaxPool2D((2, 2)))
+   model.add(tf.keras.layers.Conv2D(64, (3, 3), activation="relu"))
+   model.add(tf.keras.layers.MaxPool2D((2, 2)))
+   model.add(tf.keras.layers.Conv2D(64, (3, 3), activation="relu"))
+   model.add(tf.keras.layers.Flatten())
+   model.add(tf.keras.layers.Dense(64, activation="relu"))
    model.add(tf.keras.layers.Dense(n_outputs, activation="softmax"))
    model.compile(optimizer="adam",
-                 loss="sparse_categorical_crossentropy", #tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                 loss="sparse_categorical_crossentropy",
                  metrics=["accuracy"])
    return model
 
