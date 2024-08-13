@@ -44,6 +44,22 @@ def convert_tflite_int8(saved_model_dir):
 #####################################
 
 def build_model(input_shape, n_outputs):
+   model = tf.keras.models.Sequential()
+   model.add(tf.keras.layers.Input((input_shape[0], input_shape[1], 1)))
+   model.add(tf.keras.layers.Conv2D(32, (3, 3), activation="relu"))
+   model.add(tf.keras.layers.MaxPool2D((2, 2)))
+   model.add(tf.keras.layers.Conv2D(64, (3, 3), activation="relu"))
+   model.add(tf.keras.layers.MaxPool2D((2, 2)))
+   model.add(tf.keras.layers.Conv2D(64, (3, 3), activation="relu"))
+   model.add(tf.keras.layers.Flatten())
+   model.add(tf.keras.layers.Dense(64, activation="relu"))
+   model.add(tf.keras.layers.Dense(n_outputs))
+   model.compile(optimizer="adam",
+                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                 metrics=["accuracy"])
+   return model
+
+def build_model_aug(input_shape, n_outputs):
     data_augmentation = tf.keras.Sequential(
     [
         tf.keras.layers.RandomFlip("horizontal", input_shape=(input_shape[0], input_shape[1])),
