@@ -62,3 +62,30 @@ def create_image_data(img_dirname, outdirname="newer_images"):
         cv2.imwrite(path3, img3)
         i += 3
     return outdir
+
+def zero_pad_img(img):
+    if np.shape(img) == (32, 16):
+        padded_img = np.pad(img, ((0, 60), (0, 76)), mode="constant", constant_values=0)
+    elif np.shape(img) == (44, 92):
+        padded_img = np.pad(img, ((24, 48), (0, 0)), mode="constant", constant_values=0)
+    elif np.shape(img) == (32, 10):
+        padded_img = np.pad(img, ((20, 60), (41, 82)), mode='constant', constant_values=0)
+    elif np.shape(img) == (32, 18):
+        padded_img = np.pad(img, ((26, 62), (37, 74)), mode='constant', constant_values=0)
+    else:
+        raise ValueError("image has unexpexted shape: {}".format(np.shape(img)))
+    return padded_img
+
+def pad_images():
+    new_dir = os.path.join(os.getcwd(), "new_integer_images")
+    if not os.path.exists(new_dir):
+        os.mkdir(new_dir)
+
+    imgs_dir = os.path.join(os.getcwd(), "integer_images")
+    for fname in os.listdir(imgs_dir):
+        f = os.path.join(imgs_dir, fname)
+        img = cv2.imread(f, cv2.IMREAD_GRAYSCALE)
+        if np.shape(img) != (92, 92):
+            img = zero_pad_img(img)
+        save_path = os.path.join(new_dir, fname)
+        cv2.imwrite(save_path, img)
