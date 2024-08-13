@@ -65,15 +65,18 @@ def create_image_data(img_dirname, outdirname="newer_images"):
 
 def zero_pad_img(img):
     if np.shape(img) == (32, 16):
-        padded_img = np.pad(img, ((0, 60), (0, 76)), mode="constant", constant_values=0)
+        padded_img = np.pad(img, ((30, 30), (38, 38)), mode="constant", constant_values=0)
     elif np.shape(img) == (44, 92):
-        padded_img = np.pad(img, ((24, 48), (0, 0)), mode="constant", constant_values=0)
+        padded_img = np.pad(img, ((24, 24), (0, 0)), mode='constant', constant_values=0)
     elif np.shape(img) == (32, 10):
-        padded_img = np.pad(img, ((20, 60), (41, 82)), mode='constant', constant_values=0)
+        padded_img = np.pad(img, ((30, 30), (41, 41)), mode='constant', constant_values=0)
     elif np.shape(img) == (32, 18):
-        padded_img = np.pad(img, ((26, 62), (37, 74)), mode='constant', constant_values=0)
+        padded_img = np.pad(img, ((30, 30), (37, 37)), mode='constant', constant_values=0)
+    elif np.shape(img) == (32, 12):
+        padded_img = np.pad(img, ((30, 30), (40, 40)), mode='constant', constant_values=0)
     else:
         raise ValueError("image has unexpexted shape: {}".format(np.shape(img)))
+    assert np.shape(padded_img) == (92, 92), "check zero pad function"
     return padded_img
 
 def pad_images():

@@ -22,3 +22,18 @@ def input_size(interpreter):
     _, height, width = input_details(interpreter, 'shape')
   return width, height
 ```
+
+And one more change here:
+```
+def set_input(interpreter, data):
+  """Copies data to a model's input tensor.
+
+  Args:
+    interpreter: The ``tf.lite.Interpreter`` to update.
+    data: The input tensor.
+  """
+  try:
+    input_tensor(interpreter)[:, :] = data
+  except ValueError:
+    input_tensor(interpreter)[:, :, -1] = data
+```

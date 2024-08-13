@@ -38,8 +38,9 @@ print(x_val.shape)
 print(y_val.shape)
 
 model = build_model((92, 92), 130)
+# model = build_model((38, 38), 130)
 history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=60)
-model.evaluate(x_val, y_val)
+model.evaluate(x_test, y_test)
 scores = history.history
 loss = np.average(scores["loss"])
 accuracy = np.average(scores["accuracy"])
@@ -72,6 +73,7 @@ def convert_tflite_int8(saved_model_dir):
   def representative_dataset():
     for _ in range(130):
       data = np.random.rand(1, 92, 92, 1)
+      # data = np.random.rand(1, 38, 38, 1)
       yield [data.astype(np.float32)]
       
   file_path = os.path.join(os.getcwd(), "models", "model.tflite")

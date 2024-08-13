@@ -3,7 +3,7 @@ from image_classification import classify_image
 import os
 
 labels = os.path.join(os.getcwd(), "models", "labels.txt")
-input_img = os.path.join(os.getcwd(), "integer_images", "image112.png")
+input_img = os.path.join(os.getcwd(), "integer_image_dataset", "image8_0.png")
 model_file = os.path.join(os.getcwd(), "models", "model.tflite")
 
 interpreter = make_interpreter(model_file)
