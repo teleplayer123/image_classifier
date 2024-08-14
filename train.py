@@ -36,6 +36,6 @@ print("Accuracy: {}".format(scores["accuracy"][-1]))
 
 saved_model_dir = os.path.join(os.getcwd(), "models_int", "saved_models")
 
-save_tf_model(model, "models_int")
-convert_model_to_tflite(model, "models_int")
+save_tf_model(model, outdir="models_int")
+convert_model_to_tflite(model, outdir="models_int")
 convert_tflite_int8(saved_model_dir, input_shape=(92, 92, 1), n_outputs=130, outdir="models_int")

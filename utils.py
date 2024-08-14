@@ -22,8 +22,8 @@ def convert_model_to_tflite(model, outdir="models"):
   with open(file_path, "wb") as fh:
     fh.write(tflite_model)
 
-def save_tf_model(model, dirname="models"):
-  model_dir = os.path.join(os.getcwd(), dirname)
+def save_tf_model(model, outdir="models"):
+  model_dir = os.path.join(os.getcwd(), outdir)
   if not os.path.exists(model_dir):
       os.mkdir(model_dir)
   save_dir = os.path.join(model_dir, "saved_models")
