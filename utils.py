@@ -15,15 +15,15 @@ def convert_saved_model_to_tflite(saved_model_dir):
   with open(file_path, "wb") as fh:
     fh.write(tflite_model)
 
-def convert_model_to_tflite(model):
-  file_path = os.path.join(os.getcwd(), "models", "model.tflite")
+def convert_model_to_tflite(model, outdir="models"):
+  file_path = os.path.join(os.getcwd(), outdir, "model.tflite")
   converter = tf.lite.TFLiteConverter.from_keras_model(model)
   tflite_model = converter.convert()
   with open(file_path, "wb") as fh:
     fh.write(tflite_model)
 
-def save_tf_model(model):
-  model_dir = os.path.join(os.getcwd(), "models")
+def save_tf_model(model, dirname="models"):
+  model_dir = os.path.join(os.getcwd(), dirname)
   if not os.path.exists(model_dir):
       os.mkdir(model_dir)
   save_dir = os.path.join(model_dir, "saved_models")
@@ -31,13 +31,13 @@ def save_tf_model(model):
       os.mkdir(save_dir)
   tf.saved_model.save(model, save_dir)
 
-def convert_tflite_int8(saved_model_dir, input_shape=(92, 92), n_outputs=130):
+def convert_tflite_int8(saved_model_dir, input_shape=(92, 92, 3), n_outputs=130, outdir="models"):
   def representative_dataset():
     for _ in range(n_outputs):
-      data = np.random.rand(1, input_shape[0], input_shape[1], 1)
+      data = np.random.rand(1, input_shape[0], input_shape[1], input_shape[2])
       yield [data.astype(np.float32)]
       
-  file_path = os.path.join(os.getcwd(), "models", "model.tflite")
+  file_path = os.path.join(os.getcwd(), outdir, "model.tflite")
   converter = tf.lite.TFLiteConverter.from_saved_model(saved_model_dir)
   converter.optimizations = [tf.lite.Optimize.DEFAULT]
   converter.representative_dataset = representative_dataset
@@ -55,7 +55,7 @@ def convert_tflite_int8(saved_model_dir, input_shape=(92, 92), n_outputs=130):
 
 def build_model(input_shape, n_outputs):
    model = tf.keras.models.Sequential()
-   model.add(tf.keras.layers.Input((input_shape[0], input_shape[1], 1)))
+   model.add(tf.keras.layers.Input((input_shape[0], input_shape[1], input_shape[2])))
    model.add(tf.keras.layers.Conv2D(32, (3, 3), activation="relu"))
    model.add(tf.keras.layers.MaxPool2D((2, 2)))
    model.add(tf.keras.layers.Conv2D(64, (3, 3), activation="relu"))

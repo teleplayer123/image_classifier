@@ -24,7 +24,7 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
 
 def build_model(input_shape, n_outputs):
    model = tf.keras.models.Sequential()
-   model.add(tf.keras.layers.Input((input_shape[0], input_shape[1], 3)))
+   model.add(tf.keras.layers.Input((input_shape[0], input_shape[1], input_shape[2])))
    model.add(tf.keras.layers.Conv2D(32, (3, 3), activation="relu"))
    model.add(tf.keras.layers.MaxPool2D((2, 2)))
    model.add(tf.keras.layers.Conv2D(64, (3, 3), activation="relu"))
@@ -54,10 +54,10 @@ def save_tf_model(model):
       os.mkdir(save_dir)
   tf.saved_model.save(model, save_dir)
 
-def convert_tflite_int8(saved_model_dir, input_shape=(92, 92), n_outputs=10):
+def convert_tflite_int8(saved_model_dir, input_shape=(92, 92, 3), n_outputs=10):
   def representative_dataset():
     for _ in range(n_outputs):
-      data = np.random.rand(1, input_shape[0], input_shape[1], 3)
+      data = np.random.rand(1, input_shape[0], input_shape[1], input_shape[2])
       yield [data.astype(np.float32)]
       
   file_path = os.path.join(os.getcwd(), "models", "model.tflite")
@@ -85,7 +85,7 @@ normalization_layer = tf.keras.layers.Rescaling(1./255)
 normalized_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
 image_batch, labels_batch = next(iter(normalized_ds))
 
-model = build_model((92, 92), 10)
+model = build_model((92, 92, 3), 10)
 history = model.fit(train_ds, validation_data=val_ds, epochs=20)
 
 acc = history.history["accuracy"]
