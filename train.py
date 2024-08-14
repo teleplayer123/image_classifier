@@ -28,7 +28,7 @@ y_train, y_test = targets[:100], targets[100:117]
 # print(y_test.shape)
 
 model = build_model((92, 92), 130)
-history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=60)
+history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=30)
 model.evaluate(x_test, y_test, verbose=2)
 scores = history.history
 print("Loss: {}".format(scores["loss"][-1]))

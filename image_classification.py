@@ -2,6 +2,7 @@ import numpy as np
 from pycoral.adapters import classify, common
 from pycoral.utils.dataset import read_label_file
 import time
+from PIL import Image
 import cv2
 
 
@@ -21,7 +22,7 @@ def classify_image(img_file, labels, interpreter):
   size = common.input_size(interpreter)
   # print("SIZE: {}".format(size))
   image = cv2.imread(img_file, cv2.IMREAD_COLOR)
-  #image = Image.open(img_file).convert('RGB').resize(size, Image.LANCZOS)
+  # image = Image.open(img_file).convert('RGB').resize(size, Image.LANCZOS)
   # Image data must go through two transforms before running inference:
   # 1. normalization: f = (input - mean) / std
   # 2. quantization: q = f / scale + zero_point
