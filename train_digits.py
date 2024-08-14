@@ -54,10 +54,10 @@ def save_tf_model(model):
       os.mkdir(save_dir)
   tf.saved_model.save(model, save_dir)
 
-def convert_tflite_int8(saved_model_dir, input_shape=(92, 92), n_outputs=130):
+def convert_tflite_int8(saved_model_dir, input_shape=(92, 92), n_outputs=10):
   def representative_dataset():
     for _ in range(n_outputs):
-      data = np.random.rand(1, input_shape[0], input_shape[1], 1)
+      data = np.random.rand(1, input_shape[0], input_shape[1], 3)
       yield [data.astype(np.float32)]
       
   file_path = os.path.join(os.getcwd(), "models", "model.tflite")
@@ -100,19 +100,20 @@ print(f"Loss: {loss[-1]}")
 print(f"Val Accuracy: {val_acc[-1]}")
 print(f"Val Loss: {val_loss[-1]}")
 
+def predict_digit():
+  digit_path = os.path.join(os.getcwd(), "digit_images_dataset", "5_five", "image5_0.png")
+  img = tf.keras.utils.load_img(digit_path, target_size=(92, 92))
+  img_array = tf.keras.utils.img_to_array(img)
+  img_array = tf.expand_dims(img_array, 0) # Create a batch
+  predictions = model.predict(img_array)
+  score = tf.nn.softmax(predictions[0])
+  print("This image most likely belongs to {} with a {:.2f} percent confidence".format(class_names[np.argmax(score)], 100 * np.max(score)))
 
-digit_path = os.path.join(os.getcwd(), "digit_images_dataset", "5_five", "image5_0.png")
 
-img = tf.keras.utils.load_img(
-    digit_path, target_size=(92, 92)
-)
-img_array = tf.keras.utils.img_to_array(img)
-img_array = tf.expand_dims(img_array, 0) # Create a batch
+saved_model_dir = os.path.join(os.getcwd(), "models", "saved_models")
 
-predictions = model.predict(img_array)
-score = tf.nn.softmax(predictions[0])
+save_tf_model(model)
+convert_model_to_tflite(model)
+convert_tflite_int8(saved_model_dir)
 
-print(
-    "This image most likely belongs to {} with a {:.2f} percent confidence"
-    .format(class_names[np.argmax(score)], 100 * np.max(score))
-)
+predict_digit()
