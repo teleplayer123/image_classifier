@@ -29,7 +29,7 @@ y_train, y_test = targets[:100], targets[100:117]
 
 model = build_model((92, 92), 130)
 history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=60)
-model.evaluate(x_test, y_test)
+model.evaluate(x_test, y_test, verbose=2)
 scores = history.history
 print("Loss: {}".format(scores["loss"][-1]))
 print("Accuracy: {}".format(scores["accuracy"][-1]))
