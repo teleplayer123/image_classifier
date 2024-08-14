@@ -71,9 +71,13 @@ def convert_tflite_int8(saved_model_dir, input_shape=(92, 92), n_outputs=10):
   with open(file_path, "wb") as fh:
     fh.write(tflite_quant_model)
 
-
+labels_path = os.path.join(os.getcwd(), "models", "labels.txt")
 class_names = train_ds.class_names
 AUTOTUNE = tf.data.AUTOTUNE
+
+labels = np.array(class_names)
+labels.tofile(labels_path, sep="\n")
+
 
 train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE)
 val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
