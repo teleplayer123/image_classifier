@@ -2,40 +2,123 @@ import numpy as np
 import tensorflow as tf
 import os
 
-from utils import build_model, imgs_to_dict, images_to_arr, convert_tflite_int8, save_tf_model, convert_model_to_tflite
+
+#data_dir = os.path.join(os.getcwd(), "digit_images_dataset")
+data_dir = os.path.join(os.getcwd(), "integer_image_dataset")
+
+train_ds = tf.keras.utils.image_dataset_from_directory(
+  data_dir,
+  validation_split=0.2,
+  subset="training",
+  seed=123,
+  image_size=(92, 92),
+  batch_size=32)
+
+val_ds = tf.keras.utils.image_dataset_from_directory(
+  data_dir,
+  validation_split=0.2,
+  subset="validation",
+  seed=123,
+  image_size=(92, 92),
+  batch_size=32)
 
 
-dirpath = os.path.join(os.getcwd(), "integer_image_dataset")
+def build_model(input_shape, n_outputs):
+   model = tf.keras.models.Sequential()
+   model.add(tf.keras.layers.Input((input_shape[0], input_shape[1], input_shape[2])))
+   model.add(tf.keras.layers.Conv2D(32, (3, 3), activation="relu"))
+   model.add(tf.keras.layers.MaxPool2D((2, 2)))
+   model.add(tf.keras.layers.Conv2D(64, (3, 3), activation="relu"))
+   model.add(tf.keras.layers.MaxPool2D((2, 2)))
+   model.add(tf.keras.layers.Conv2D(64, (3, 3), activation="relu"))
+   model.add(tf.keras.layers.Flatten())
+   model.add(tf.keras.layers.Dense(128, activation="relu"))
+   model.add(tf.keras.layers.Dense(n_outputs))
+   model.compile(optimizer="adam",
+                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                 metrics=["accuracy"])
+   return model
 
-model_dir = os.path.join(os.getcwd(), "models_int")
-if not os.path.exists(model_dir):
-   os.mkdir(model_dir)
+def convert_model_to_tflite(model):
+  file_path = os.path.join(os.getcwd(), "models", "model.tflite")
+  converter = tf.lite.TFLiteConverter.from_keras_model(model)
+  tflite_model = converter.convert()
+  with open(file_path, "wb") as fh:
+    fh.write(tflite_model)
 
-d = imgs_to_dict(dirpath)
-a = images_to_arr(d)
-targets = np.array([int(i.split("_")[0]) for i in list(d.keys())])
+def save_tf_model(model):
+  model_dir = os.path.join(os.getcwd(), "models")
+  if not os.path.exists(model_dir):
+      os.mkdir(model_dir)
+  save_dir = os.path.join(model_dir, "saved_models")
+  if not os.path.exists(save_dir):
+      os.mkdir(save_dir)
+  tf.saved_model.save(model, save_dir)
 
-labels = targets
-label_file = os.path.join(os.getcwd(), "models_int", "labels.txt")
-labels.tofile(label_file, sep="\n", format="%d")
+def convert_tflite_int8(saved_model_dir, input_shape=(92, 92, 3), n_outputs=300):
+  def representative_dataset():
+    for _ in range(n_outputs):
+      data = np.random.rand(1, input_shape[0], input_shape[1], input_shape[2])
+      yield [data.astype(np.float32)]
+      
+  file_path = os.path.join(os.getcwd(), "models", "model.tflite")
+  converter = tf.lite.TFLiteConverter.from_saved_model(saved_model_dir)
+  converter.optimizations = [tf.lite.Optimize.DEFAULT]
+  converter.representative_dataset = representative_dataset
+  converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+  converter.inference_input_type = tf.uint8
+  converter.inference_output_type = tf.uint8
+  tflite_quant_model = converter.convert()
+  with open(file_path, "wb") as fh:
+    fh.write(tflite_quant_model)
 
-x_train, x_test = a[:100], a[100:117]
-y_train, y_test = targets[:100], targets[100:117]
+labels_path = os.path.join(os.getcwd(), "models", "labels.txt")
+class_names = train_ds.class_names
+AUTOTUNE = tf.data.AUTOTUNE
 
-# print(x_train.shape)
-# print(y_train.shape)
-# print(x_test.shape)
-# print(y_test.shape)
+labels = np.array(class_names)
+labels.tofile(labels_path, sep="\n")
 
-model = build_model((92, 92, 1), 130)
-history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=30)
-model.evaluate(x_test, y_test, verbose=2)
-scores = history.history
-print("Loss: {}".format(scores["loss"][-1]))
-print("Accuracy: {}".format(scores["accuracy"][-1]))
 
-saved_model_dir = os.path.join(os.getcwd(), "models_int", "saved_models")
+train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE)
+val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
+normalization_layer = tf.keras.layers.Rescaling(1./255)
+normalized_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
+image_batch, labels_batch = next(iter(normalized_ds))
 
-save_tf_model(model, outdir="models_int")
-convert_model_to_tflite(model, outdir="models_int")
-convert_tflite_int8(saved_model_dir, input_shape=(92, 92, 1), n_outputs=130, outdir="models_int")
+model = build_model((92, 92, 3), 300)
+history = model.fit(train_ds, validation_data=val_ds, epochs=20)
+
+acc = history.history["accuracy"]
+val_acc = history.history["val_accuracy"]
+loss = history.history["loss"]
+val_loss = history.history["val_loss"]
+
+print("Score Averages\n--------------------")
+print(f"Accuracy: {np.average(acc)}")
+print(f"Loss: {np.average(loss)}")
+print(f"Val Accuracy: {np.average(val_acc)}")
+print(f"Val Loss: {np.average(val_loss)}")
+print("\nScores\n-------------------------")
+print(f"Accuracy: {acc[-1]}")
+print(f"Loss: {loss[-1]}")
+print(f"Val Accuracy: {val_acc[-1]}")
+print(f"Val Loss: {val_loss[-1]}")
+
+def predict_digit():
+  digit_path = os.path.join(os.getcwd(), "digit_images_dataset", "5_five", "image5_0.png")
+  img = tf.keras.utils.load_img(digit_path, target_size=(92, 92))
+  img_array = tf.keras.utils.img_to_array(img)
+  img_array = tf.expand_dims(img_array, 0)
+  predictions = model.predict(img_array)
+  score = tf.nn.softmax(predictions[0])
+  print("This image most likely belongs to {} with a {:.2f} percent confidence".format(class_names[np.argmax(score)], 100 * np.max(score)))
+
+
+saved_model_dir = os.path.join(os.getcwd(), "models", "saved_models")
+
+save_tf_model(model)
+convert_model_to_tflite(model)
+convert_tflite_int8(saved_model_dir)
+
+#predict_digit()
