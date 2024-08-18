@@ -8,5 +8,6 @@ newer_images
 .vscode
 models_bak
 integer_images
+new_integer_images
 integer_images_dataset_small
 models_int
