@@ -239,3 +239,20 @@ def images_to_arr_v1(obj):
     else:
         raise TypeError(f"type {type(obj)} is not supported")
     return np.array(imgs)
+
+def zero_pad(img, shape=(92, 92)):
+    img_shape = np.shape(img)
+    if img_shape[0] > shape[0] or img_shape[1] > shape[1]:
+        raise ValueError("Shape to pad image to must be greater or equal to image original shape.")
+    x_size = shape[0] - img_shape[0]
+    x1 = x_size // 2
+    x2 = x_size // 2
+    xs = sum([img_shape[0], x1, x2])
+    assert xs == shape[0], "Not able to pad image into provided shape"
+    y_size = shape[1] - img_shape[1]
+    y1 = y_size // 2
+    y2 = y_size // 2
+    ys = sum([img_shape[1], y1, y2])
+    assert ys == shape[1], "Not able to pad image into provided shape"
+    padded_img = np.pad(img, ((x1, x2), (y1, y2)), mode="constant", constant_values=0)
+    return padded_img
