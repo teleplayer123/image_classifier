@@ -3,8 +3,8 @@ import tensorflow as tf
 import os
 
 
-#data_dir = os.path.join(os.getcwd(), "digit_images_dataset")
-data_dir = os.path.join(os.getcwd(), "integer_dataset")
+data_dir = os.path.join(os.getcwd(), "digit_images_dataset")
+# data_dir = os.path.join(os.getcwd(), "integer_dataset")
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
   data_dir,
@@ -55,7 +55,7 @@ def save_tf_model(model):
       os.mkdir(save_dir)
   tf.saved_model.save(model, save_dir)
 
-def convert_tflite_int8(saved_model_dir, input_shape=(92, 92, 3), n_outputs=300):
+def convert_tflite_int8(saved_model_dir, input_shape=(92, 92, 3), n_outputs=10):
   def representative_dataset():
     for _ in range(n_outputs):
       data = np.random.rand(1, input_shape[0], input_shape[1], input_shape[2])
@@ -86,7 +86,7 @@ normalization_layer = tf.keras.layers.Rescaling(1./255)
 normalized_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
 image_batch, labels_batch = next(iter(normalized_ds))
 
-model = build_model((92, 92, 3), 300)
+model = build_model((92, 92, 3), 10)
 history = model.fit(train_ds, validation_data=val_ds, epochs=20)
 
 acc = history.history["accuracy"]
