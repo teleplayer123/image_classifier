@@ -4,7 +4,7 @@ import os
 
 
 #data_dir = os.path.join(os.getcwd(), "digit_images_dataset")
-data_dir = os.path.join(os.getcwd(), "integer_image_dataset")
+data_dir = os.path.join(os.getcwd(), "integer_dataset")
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
   data_dir,
