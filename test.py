@@ -9,7 +9,7 @@ model_file = os.path.join(os.getcwd(), "models", "model.tflite")
 
 interpreter = make_interpreter(model_file)
 
-for i in range(20):
+for i in range(10):
     try:
         input_img = os.path.join(os.getcwd(), "digit_images_dataset", "{}".format(i), "image{}_0.png".format(i))
         classify_image(input_img, labels, interpreter)
